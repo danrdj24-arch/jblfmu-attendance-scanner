@@ -1,668 +1,652 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>JBLFMU Molo Attendance Scanner</title>
+
+  <!-- QR SCANNER LIBRARY -->
+  <script src="https://unpkg.com/html5-qrcode"
+          type="text/javascript"></script>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f5f9;
+      color: #222;
+    }
+
+    .header {
+      background: #003366;
+      color: white;
+      text-align: center;
+      padding: 18px 10px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    .header p {
+      margin: 5px 0 0;
+      font-size: 15px;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+
+    .station {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    .station-name {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .station-location {
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .online {
+      margin-top: 8px;
+      font-weight: bold;
+      color: green;
+    }
+
+    #reader {
+      width: 100%;
+      background: black;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .instruction {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 18px 0;
+    }
+
+    #result {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      min-height: 100px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+
+    .student-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .student-info {
+      font-size: 17px;
+      margin: 5px;
+    }
+
+    .present {
+      color: green;
+      font-size: 25px;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    .late {
+      color: red;
+      font-size: 25px;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+
+    .waiting {
+      color: #555;
+    }
+
+    .footer {
+      text-align: center;
+      color: #777;
+      font-size: 13px;
+      margin: 20px;
+    }
+
   </style>
 </head>
+
+
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport"</p>
-<p class="p1"><span class="Apple-converted-space">        </span>content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;JBLFMU Molo Attendance Scanner&lt;/title&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- QR SCANNER LIBRARY --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/html5-qrcode"</p>
-<p class="p1"><span class="Apple-converted-space">          </span>type="text/javascript"&gt;&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>* {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>box-sizing: border-box;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-family: Arial, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: #f2f5f9;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #222;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.header {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: #003366;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 18px 10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.header h1 {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 25px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.header p {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 5px 0 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.container {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 95%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>max-width: 600px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 20px auto;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.station {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: white;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 2px 8px rgba(0,0,0,0.12);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.station-name {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.station-location {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #555;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.online {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: green;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>#reader {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: black;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>overflow: hidden;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.instruction {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 18px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 18px 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>#result {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: white;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>min-height: 100px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 2px 8px rgba(0,0,0,0.12);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.student-name {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 24px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.student-info {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 17px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 5px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.present {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: green;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 25px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.late {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: red;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 25px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.error {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: red;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.success {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: green;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.waiting {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #555;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.footer {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #777;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 13px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="header"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;JBLFMU MOLO&lt;/h1&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>Basic Education Department</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="container"&gt;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- STATION INFORMATION --&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="station"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="station-name"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>MAIN GATE</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="station-location"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>JBLFMU Molo</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="online"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>● STATION ONLINE</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- SCANNER --&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="instruction"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>SCAN STUDENT ID QR CODE</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="reader"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- RESULT --&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="result"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="waiting"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>Waiting for student QR code...</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="footer"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>JBLFMU Molo Basic Education Attendance System</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">/************************************************</p>
-<p class="p1"><span class="Apple-converted-space"> </span>* SETTINGS</p>
-<p class="p1"><span class="Apple-converted-space"> </span>************************************************/</p>
-<p class="p2"><br></p>
-<p class="p1">const APPS_SCRIPT_URL =</p>
-<p class="p1">"https://script.google.com/macros/s/AKfycbyLzlhZxzBljBH8Pp_fxzH5hvMozzvCDPkhRoz3xcv4XVNvHpHgt05jsV_da7pHaAnq/exec";</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">const STATION_ID =</p>
-<p class="p1">"JBL-MOLO-GATE-01";</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">const STATION_TOKEN =</p>
-<p class="p1">"JBLMOLO-GATE-2026-8X7K";</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">/************************************************</p>
-<p class="p1"><span class="Apple-converted-space"> </span>* DISPLAY RESULT</p>
-<p class="p1"><span class="Apple-converted-space"> </span>************************************************/</p>
-<p class="p2"><br></p>
-<p class="p1">function showMessage(message, type) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const result =</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById("result");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>result.innerHTML =</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;div class="' + type + '"&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>message +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;/div&gt;';</p>
-<p class="p2"><br></p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">/************************************************</p>
-<p class="p1"><span class="Apple-converted-space"> </span>* EXTRACT STUDENT ID</p>
-<p class="p1"><span class="Apple-converted-space"> </span>************************************************/</p>
-<p class="p2"><br></p>
-<p class="p1">function extractStudentID(qrText) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>qrText =</p>
-<p class="p1"><span class="Apple-converted-space">    </span>String(qrText).trim();</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/*</p>
-<p class="p1"><span class="Apple-converted-space">   </span>* If QR contains:</p>
-<p class="p1"><span class="Apple-converted-space">   </span>*</p>
-<p class="p1"><span class="Apple-converted-space">   </span>* https://.../exec?id=JBL-0001</p>
-<p class="p1"><span class="Apple-converted-space">   </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>try {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const url =</p>
-<p class="p1"><span class="Apple-converted-space">      </span>new URL(qrText);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const id =</p>
-<p class="p1"><span class="Apple-converted-space">      </span>url.searchParams.get("id");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (id) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return id.trim();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>} catch (error) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>/*</p>
-<p class="p1"><span class="Apple-converted-space">     </span>* QR is not a URL.</p>
-<p class="p1"><span class="Apple-converted-space">     </span>* Continue below.</p>
-<p class="p1"><span class="Apple-converted-space">     </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/*</p>
-<p class="p1"><span class="Apple-converted-space">   </span>* If QR contains only:</p>
-<p class="p1"><span class="Apple-converted-space">   </span>*</p>
-<p class="p1"><span class="Apple-converted-space">   </span>* JBL-0001</p>
-<p class="p1"><span class="Apple-converted-space">   </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (qrText !== "") {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return qrText;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>return "";</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">/************************************************</p>
-<p class="p1"><span class="Apple-converted-space"> </span>* RECORD ATTENDANCE</p>
-<p class="p1"><span class="Apple-converted-space"> </span>************************************************/</p>
-<p class="p2"><br></p>
-<p class="p1">function recordAttendance(studentId) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>showMessage(</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"Processing attendance...",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"waiting"</p>
-<p class="p1"><span class="Apple-converted-space">  </span>);</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/*</p>
-<p class="p1"><span class="Apple-converted-space">   </span>* JSONP callback</p>
-<p class="p1"><span class="Apple-converted-space">   </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const callbackName =</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"attendanceCallback_" +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>Date.now();</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>window[callbackName] =</p>
-<p class="p1"><span class="Apple-converted-space">    </span>function(response) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>console.log(response);</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!response.success) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>showMessage(</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"❌ " +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>response.message,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"error"</p>
-<p class="p1"><span class="Apple-converted-space">        </span>);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>cleanup();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>/*</p>
-<p class="p1"><span class="Apple-converted-space">       </span>* DUPLICATE</p>
-<p class="p1"><span class="Apple-converted-space">       </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (response.duplicate) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById("result")</p>
-<p class="p1"><span class="Apple-converted-space">          </span>.innerHTML =</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;div class='student-name'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>response.name +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;/div&gt;" +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;div class='student-info'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"Grade " +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>response.grade +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>" - " +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>response.section +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;/div&gt;" +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;div class='student-info'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"Time: " +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>response.time +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;/div&gt;" +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;div class='student-info'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"Status: " +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>response.status +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;/div&gt;" +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;div class='error'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"⚠ Attendance already recorded today" +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;/div&gt;";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>cleanup();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>/*</p>
-<p class="p1"><span class="Apple-converted-space">       </span>* SUCCESS</p>
-<p class="p1"><span class="Apple-converted-space">       </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>let statusClass =</p>
-<p class="p1"><span class="Apple-converted-space">        </span>response.status === "PRESENT"</p>
-<p class="p1"><span class="Apple-converted-space">        </span>? "present"</p>
-<p class="p1"><span class="Apple-converted-space">        </span>: "late";</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById("result")</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.innerHTML =</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>"&lt;div class='student-name'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>response.name +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"&lt;/div&gt;" +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>"&lt;div class='student-info'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Student ID: " +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>response.studentId +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"&lt;/div&gt;" +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>"&lt;div class='student-info'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Grade " +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>response.grade +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>" - " +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>response.section +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"&lt;/div&gt;" +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>"&lt;div class='student-info'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Time: " +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>response.time +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"&lt;/div&gt;" +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>"&lt;div class='" +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>statusClass +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>response.status +</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"&lt;/div&gt;";</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>/*</p>
-<p class="p1"><span class="Apple-converted-space">       </span>* Wait before allowing next scan</p>
-<p class="p1"><span class="Apple-converted-space">       </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>setTimeout(function() {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById("result")</p>
-<p class="p1"><span class="Apple-converted-space">          </span>.innerHTML =</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;div class='waiting'&gt;" +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"Waiting for student QR code..." +</p>
-<p class="p1"><span class="Apple-converted-space">          </span>"&lt;/div&gt;";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>}, 4000);</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>cleanup();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/*</p>
-<p class="p1"><span class="Apple-converted-space">   </span>* Create script request</p>
-<p class="p1"><span class="Apple-converted-space">   </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const script =</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.createElement("script");</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const url =</p>
-<p class="p1"><span class="Apple-converted-space">    </span>APPS_SCRIPT_URL +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>"?action=record" +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>"&amp;id=" +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>encodeURIComponent(studentId) +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>"&amp;station=" +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>encodeURIComponent(STATION_ID) +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>"&amp;token=" +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>encodeURIComponent(STATION_TOKEN) +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>"&amp;callback=" +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>encodeURIComponent(callbackName);</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>script.src = url;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>script.onerror =</p>
-<p class="p1"><span class="Apple-converted-space">    </span>function() {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>showMessage(</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"❌ Unable to connect to attendance server.",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"error"</p>
-<p class="p1"><span class="Apple-converted-space">      </span>);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>cleanup();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.body.appendChild(script);</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function cleanup() {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>delete window[callbackName];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (script.parentNode) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>script.parentNode.removeChild(script);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">/************************************************</p>
-<p class="p1"><span class="Apple-converted-space"> </span>* QR SCANNED</p>
-<p class="p1"><span class="Apple-converted-space"> </span>************************************************/</p>
-<p class="p2"><br></p>
-<p class="p1">let processing = false;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">function onScanSuccess(decodedText) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (processing) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>processing = true;</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>console.log(</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"QR scanned:",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>decodedText</p>
-<p class="p1"><span class="Apple-converted-space">  </span>);</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const studentId =</p>
-<p class="p1"><span class="Apple-converted-space">    </span>extractStudentID(decodedText);</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!studentId) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>showMessage(</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"❌ Invalid student QR code.",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"error"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>setTimeout(function() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>processing = false;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}, 2000);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>recordAttendance(studentId);</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/*</p>
-<p class="p1"><span class="Apple-converted-space">   </span>* Allow next scan after processing</p>
-<p class="p1"><span class="Apple-converted-space">   </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>setTimeout(function() {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>processing = false;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>}, 5000);</p>
-<p class="p2"><br></p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">/************************************************</p>
-<p class="p1"><span class="Apple-converted-space"> </span>* QR SCANNER ERROR</p>
-<p class="p1"><span class="Apple-converted-space"> </span>************************************************/</p>
-<p class="p2"><br></p>
-<p class="p1">function onScanFailure(error) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/*</p>
-<p class="p1"><span class="Apple-converted-space">   </span>* Ignore normal scanning errors.</p>
-<p class="p1"><span class="Apple-converted-space">   </span>*</p>
-<p class="p1"><span class="Apple-converted-space">   </span>* The library continuously searches</p>
-<p class="p1"><span class="Apple-converted-space">   </span>* for a QR code.</p>
-<p class="p1"><span class="Apple-converted-space">   </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">/************************************************</p>
-<p class="p1"><span class="Apple-converted-space"> </span>* START CAMERA</p>
-<p class="p1"><span class="Apple-converted-space"> </span>************************************************/</p>
-<p class="p2"><br></p>
-<p class="p1">function startScanner() {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const html5QrCode =</p>
-<p class="p1"><span class="Apple-converted-space">    </span>new Html5Qrcode("reader");</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const config = {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>fps: 10,</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>qrbox: {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 250,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height: 250</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>html5QrCode.start(</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>facingMode: "environment"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>},</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>config,</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>onScanSuccess,</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>onScanFailure</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>)</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.catch(function(error) {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>console.error(error);</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>showMessage(</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>"❌ Camera could not start.&lt;br&gt;&lt;br&gt;" +</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Please allow camera permission " +</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"for this website.",</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>"error"</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p2"><br></p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1">/************************************************</p>
-<p class="p1"><span class="Apple-converted-space"> </span>* START</p>
-<p class="p1"><span class="Apple-converted-space"> </span>************************************************/</p>
-<p class="p2"><br></p>
-<p class="p1">window.addEventListener(</p>
-<p class="p1"><span class="Apple-converted-space">  </span>"load",</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function() {</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>startScanner();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">);</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+  <div class="header">
+
+    <h1>JBLFMU MOLO</h1>
+
+    <p>
+      Basic Education Department
+    </p>
+
+  </div>
+
+
+  <div class="container">
+
+
+    <!-- STATION INFORMATION -->
+
+    <div class="station">
+
+      <div class="station-name">
+        MAIN GATE
+      </div>
+
+      <div class="station-location">
+        JBLFMU Molo
+      </div>
+
+      <div class="online">
+        ● STATION ONLINE
+      </div>
+
+    </div>
+
+
+    <!-- SCANNER -->
+
+    <div class="instruction">
+      SCAN STUDENT ID QR CODE
+    </div>
+
+
+    <div id="reader"></div>
+
+
+    <!-- RESULT -->
+
+    <div id="result">
+
+      <div class="waiting">
+        Waiting for student QR code...
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+  <div class="footer">
+
+    JBLFMU Molo Basic Education Attendance System
+
+  </div>
+
+
+
+<script>
+
+/************************************************
+ * SETTINGS
+ ************************************************/
+
+const APPS_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbyLzlhZxzBljBH8Pp_fxzH5hvMozzvCDPkhRoz3xcv4XVNvHpHgt05jsV_da7pHaAnq/exec";
+
+
+const STATION_ID =
+"JBL-MOLO-GATE-01";
+
+
+const STATION_TOKEN =
+"JBLMOLO-GATE-2026-8X7K";
+
+
+/************************************************
+ * DISPLAY RESULT
+ ************************************************/
+
+function showMessage(message, type) {
+
+  const result =
+    document.getElementById("result");
+
+  result.innerHTML =
+    '<div class="' + type + '">' +
+    message +
+    '</div>';
+
+}
+
+
+/************************************************
+ * EXTRACT STUDENT ID
+ ************************************************/
+
+function extractStudentID(qrText) {
+
+  qrText =
+    String(qrText).trim();
+
+
+  /*
+   * If QR contains:
+   *
+   * https://.../exec?id=JBL-0001
+   */
+
+  try {
+
+    const url =
+      new URL(qrText);
+
+    const id =
+      url.searchParams.get("id");
+
+    if (id) {
+      return id.trim();
+    }
+
+  } catch (error) {
+
+    /*
+     * QR is not a URL.
+     * Continue below.
+     */
+
+  }
+
+
+  /*
+   * If QR contains only:
+   *
+   * JBL-0001
+   */
+
+  if (qrText !== "") {
+    return qrText;
+  }
+
+
+  return "";
+}
+
+
+/************************************************
+ * RECORD ATTENDANCE
+ ************************************************/
+
+function recordAttendance(studentId) {
+
+  showMessage(
+    "Processing attendance...",
+    "waiting"
+  );
+
+
+  /*
+   * JSONP callback
+   */
+
+  const callbackName =
+    "attendanceCallback_" +
+    Date.now();
+
+
+  window[callbackName] =
+    function(response) {
+
+      console.log(response);
+
+
+      if (!response.success) {
+
+        showMessage(
+          "❌ " +
+          response.message,
+          "error"
+        );
+
+        cleanup();
+
+        return;
+      }
+
+
+      /*
+       * DUPLICATE
+       */
+
+      if (response.duplicate) {
+
+        document.getElementById("result")
+          .innerHTML =
+
+          "<div class='student-name'>" +
+          response.name +
+          "</div>" +
+
+          "<div class='student-info'>" +
+          "Grade " +
+          response.grade +
+          " - " +
+          response.section +
+          "</div>" +
+
+          "<div class='student-info'>" +
+          "Time: " +
+          response.time +
+          "</div>" +
+
+          "<div class='student-info'>" +
+          "Status: " +
+          response.status +
+          "</div>" +
+
+          "<div class='error'>" +
+          "⚠ Attendance already recorded today" +
+          "</div>";
+
+        cleanup();
+
+        return;
+      }
+
+
+      /*
+       * SUCCESS
+       */
+
+      let statusClass =
+        response.status === "PRESENT"
+        ? "present"
+        : "late";
+
+
+      document.getElementById("result")
+        .innerHTML =
+
+        "<div class='student-name'>" +
+        response.name +
+        "</div>" +
+
+        "<div class='student-info'>" +
+        "Student ID: " +
+        response.studentId +
+        "</div>" +
+
+        "<div class='student-info'>" +
+        "Grade " +
+        response.grade +
+        " - " +
+        response.section +
+        "</div>" +
+
+        "<div class='student-info'>" +
+        "Time: " +
+        response.time +
+        "</div>" +
+
+        "<div class='" +
+        statusClass +
+        "'>" +
+        response.status +
+        "</div>";
+
+
+      /*
+       * Wait before allowing next scan
+       */
+
+      setTimeout(function() {
+
+        document.getElementById("result")
+          .innerHTML =
+
+          "<div class='waiting'>" +
+          "Waiting for student QR code..." +
+          "</div>";
+
+      }, 4000);
+
+
+      cleanup();
+
+    };
+
+
+  /*
+   * Create script request
+   */
+
+  const script =
+    document.createElement("script");
+
+
+  const url =
+    APPS_SCRIPT_URL +
+
+    "?action=record" +
+
+    "&id=" +
+    encodeURIComponent(studentId) +
+
+    "&station=" +
+    encodeURIComponent(STATION_ID) +
+
+    "&token=" +
+    encodeURIComponent(STATION_TOKEN) +
+
+    "&callback=" +
+    encodeURIComponent(callbackName);
+
+
+  script.src = url;
+
+
+  script.onerror =
+    function() {
+
+      showMessage(
+        "❌ Unable to connect to attendance server.",
+        "error"
+      );
+
+      cleanup();
+
+    };
+
+
+  document.body.appendChild(script);
+
+
+  function cleanup() {
+
+    delete window[callbackName];
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+
+  }
+
+}
+
+
+/************************************************
+ * QR SCANNED
+ ************************************************/
+
+let processing = false;
+
+
+function onScanSuccess(decodedText) {
+
+  if (processing) {
+    return;
+  }
+
+
+  processing = true;
+
+
+  console.log(
+    "QR scanned:",
+    decodedText
+  );
+
+
+  const studentId =
+    extractStudentID(decodedText);
+
+
+  if (!studentId) {
+
+    showMessage(
+      "❌ Invalid student QR code.",
+      "error"
+    );
+
+    setTimeout(function() {
+      processing = false;
+    }, 2000);
+
+    return;
+  }
+
+
+  recordAttendance(studentId);
+
+
+  /*
+   * Allow next scan after processing
+   */
+
+  setTimeout(function() {
+
+    processing = false;
+
+  }, 5000);
+
+}
+
+
+/************************************************
+ * QR SCANNER ERROR
+ ************************************************/
+
+function onScanFailure(error) {
+
+  /*
+   * Ignore normal scanning errors.
+   *
+   * The library continuously searches
+   * for a QR code.
+   */
+
+}
+
+
+/************************************************
+ * START CAMERA
+ ************************************************/
+
+function startScanner() {
+
+  const html5QrCode =
+    new Html5Qrcode("reader");
+
+
+  const config = {
+
+    fps: 10,
+
+    qrbox: {
+      width: 250,
+      height: 250
+    }
+
+  };
+
+
+  html5QrCode.start(
+
+    {
+      facingMode: "environment"
+    },
+
+    config,
+
+    onScanSuccess,
+
+    onScanFailure
+
+  )
+
+  .catch(function(error) {
+
+    console.error(error);
+
+
+    showMessage(
+
+      "❌ Camera could not start.<br><br>" +
+
+      "Please allow camera permission " +
+      "for this website.",
+
+      "error"
+
+    );
+
+  });
+
+}
+
+
+/************************************************
+ * START
+ ************************************************/
+
+window.addEventListener(
+  "load",
+  function() {
+
+    startScanner();
+
+  }
+);
+
+</script>
+
 </body>
 </html>
