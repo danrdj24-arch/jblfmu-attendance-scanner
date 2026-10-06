@@ -10,8 +10,14 @@
 
   <title>JBLFMU Molo Attendance Scanner</title>
 
-  <script src="https://unpkg.com/html5-qrcode"
-          type="text/javascript"></script>
+
+  <!-- QR SCANNER LIBRARY -->
+
+  <script
+    src="https://unpkg.com/html5-qrcode"
+    type="text/javascript">
+  </script>
+
 
   <style>
 
@@ -19,136 +25,247 @@
       box-sizing: border-box;
     }
 
+
     body {
+
       margin: 0;
+
       font-family: Arial, sans-serif;
+
       background: #f2f5f9;
+
       color: #222;
+
     }
+
 
     .header {
+
       background: #003366;
+
       color: white;
+
       text-align: center;
+
       padding: 18px 10px;
+
     }
+
 
     .header h1 {
+
       margin: 0;
+
       font-size: 25px;
+
     }
+
 
     .header p {
+
       margin: 5px 0 0;
+
       font-size: 15px;
+
     }
+
 
     .container {
+
       width: 95%;
+
       max-width: 600px;
+
       margin: 20px auto;
+
     }
+
 
     .station {
+
       background: white;
+
       border-radius: 12px;
+
       padding: 15px;
+
       margin-bottom: 15px;
+
       text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.12);
+
     }
+
 
     .station-name {
+
       font-size: 20px;
+
       font-weight: bold;
+
     }
+
 
     .station-location {
+
       color: #555;
+
       margin-top: 4px;
+
     }
+
 
     .online {
+
       margin-top: 8px;
+
       font-weight: bold;
+
       color: green;
+
     }
+
 
     #reader {
+
       width: 100%;
+
       background: black;
+
       border-radius: 12px;
+
       overflow: hidden;
+
     }
+
 
     .instruction {
+
       text-align: center;
+
       font-size: 18px;
+
       font-weight: bold;
+
       margin: 18px 0;
+
     }
+
 
     #result {
+
       background: white;
+
       border-radius: 12px;
+
       padding: 20px;
-      min-height: 120px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+
+      min-height: 130px;
+
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.12);
+
       text-align: center;
+
     }
+
 
     .student-name {
+
       font-size: 24px;
+
       font-weight: bold;
+
       margin-bottom: 8px;
+
     }
+
 
     .student-info {
+
       font-size: 17px;
+
       margin: 5px;
+
     }
+
 
     .present {
+
       color: green;
+
       font-size: 25px;
+
       font-weight: bold;
+
       margin-top: 12px;
+
     }
+
 
     .late {
+
       color: red;
+
       font-size: 25px;
+
       font-weight: bold;
+
       margin-top: 12px;
+
     }
+
 
     .exit {
+
       color: #0066cc;
+
       font-size: 25px;
+
       font-weight: bold;
+
       margin-top: 12px;
+
     }
+
 
     .error {
+
       color: red;
+
       font-weight: bold;
-      font-size: 18px;
+
     }
+
 
     .success {
+
       color: green;
+
       font-weight: bold;
+
     }
+
 
     .waiting {
+
       color: #555;
+
     }
 
+
     .footer {
+
       text-align: center;
+
       color: #777;
+
       font-size: 13px;
+
       margin: 20px;
+
     }
 
   </style>
@@ -157,6 +274,9 @@
 
 
 <body>
+
+
+  <!-- HEADER -->
 
   <div class="header">
 
@@ -170,6 +290,7 @@
 
 
   <div class="container">
+
 
     <!-- STATION -->
 
@@ -190,11 +311,16 @@
     </div>
 
 
-    <!-- SCANNER -->
+    <!-- INSTRUCTION -->
 
     <div class="instruction">
+
       SCAN STUDENT ID QR CODE
+
     </div>
+
+
+    <!-- CAMERA -->
 
     <div id="reader"></div>
 
@@ -204,13 +330,18 @@
     <div id="result">
 
       <div class="waiting">
+
         Waiting for student QR code...
+
       </div>
 
     </div>
 
+
   </div>
 
+
+  <!-- FOOTER -->
 
   <div class="footer">
 
@@ -219,79 +350,73 @@
   </div>
 
 
+
 <script>
+
 
 /************************************************
  * SETTINGS
  ************************************************/
 
+
 const APPS_SCRIPT_URL =
+
   "https://script.google.com/macros/s/AKfycbxVAhx9PVZqpo-WSFIDOoz-Vwqzrxus2EEIqdzkH_p94gfuUNhbt4SyYggZZjD9z3YA/exec";
 
 
 const STATION_ID =
+
   "JBL-MOLO-GATE-01";
 
 
 const STATION_TOKEN =
+
   "JBLMOLO-GATE-2026-8X7K";
 
 
-/************************************************
- * PROCESSING CONTROL
- ************************************************/
-
-let processing = false;
-
 
 /************************************************
- * DISPLAY MESSAGE
+ * SHOW MESSAGE
  ************************************************/
+
 
 function showMessage(message, type) {
 
   const result =
+
     document.getElementById("result");
 
+
   result.innerHTML =
+
     '<div class="' +
     type +
     '">' +
+
     message +
+
     '</div>';
 
 }
 
-
-/************************************************
- * RESET SCANNER
- ************************************************/
-
-function resetScanner() {
-
-  processing = false;
-
-  document.getElementById("result").innerHTML =
-
-    "<div class='waiting'>" +
-    "Waiting for student QR code..." +
-    "</div>";
-
-}
 
 
 /************************************************
  * EXTRACT STUDENT ID
  ************************************************/
 
+
 function extractStudentID(qrText) {
 
   qrText =
+
     String(qrText).trim();
 
 
   /*
-   * QR containing:
+   * QR CODE CONTAINS URL
+   *
+   * Example:
    *
    * https://.../exec?id=JBL-0001
    */
@@ -299,10 +424,14 @@ function extractStudentID(qrText) {
   try {
 
     const url =
+
       new URL(qrText);
 
+
     const id =
+
       url.searchParams.get("id");
+
 
     if (id) {
 
@@ -310,18 +439,21 @@ function extractStudentID(qrText) {
 
     }
 
-  } catch (error) {
+  }
 
-    // Not a URL.
-    // Continue below.
+  catch (error) {
+
+    /*
+     * QR is not a URL.
+     * Continue below.
+     */
 
   }
 
 
   /*
-   * QR containing only:
-   *
-   * JBL-0001
+   * QR CODE MAY CONTAIN
+   * ONLY STUDENT ID
    */
 
   if (qrText !== "") {
@@ -336,24 +468,32 @@ function extractStudentID(qrText) {
 }
 
 
+
 /************************************************
  * RECORD ATTENDANCE
  ************************************************/
 
+
 function recordAttendance(studentId) {
 
+
   showMessage(
+
     "Processing attendance...",
+
     "waiting"
+
   );
 
 
   /*
-   * Unique JSONP callback
+   * CREATE UNIQUE JSONP CALLBACK
    */
 
   const callbackName =
+
     "attendanceCallback_" +
+
     Date.now();
 
 
@@ -361,64 +501,218 @@ function recordAttendance(studentId) {
 
 
   /*
-   * Cleanup function
+   * SCRIPT VARIABLE
+   *
+   * Declared here so finish()
+   * can remove it.
    */
 
-  function cleanup() {
+  let script = null;
+
+
+
+  /**********************************************
+   * FINISH REQUEST
+   **********************************************/
+
+  function finish() {
+
+
+    if (finished) {
+
+      return;
+
+    }
+
 
     finished = true;
 
-    delete window[callbackName];
 
-    if (
-      script &&
-      script.parentNode
-    ) {
+    /*
+     * Remove callback
+     */
 
-      script.parentNode.removeChild(
-        script
-      );
+    try {
+
+      delete window[callbackName];
 
     }
+
+    catch (error) {
+
+      console.log(error);
+
+    }
+
+
+    /*
+     * Remove script element
+     */
+
+    if (
+
+      script &&
+
+      script.parentNode
+
+    ) {
+
+      script.parentNode.removeChild(script);
+
+    }
+
+
+    /*
+     * Allow another QR scan
+
+     */
+
+    setTimeout(function() {
+
+      processing = false;
+
+    }, 1000);
 
   }
 
 
-  /*
-   * CALLBACK
-   */
+
+  /**********************************************
+   * JSONP CALLBACK
+   **********************************************/
 
   window[callbackName] =
-    function(response) {
 
-      if (finished) {
-        return;
-      }
+    function(response) {
 
 
       console.log(
+
         "Attendance server response:",
+
         response
+
       );
 
 
       /*
-       * SERVER ERROR
+       * EMPTY RESPONSE
        */
 
-      if (
-        !response ||
-        response.success !== true
-      ) {
+      if (!response) {
+
+
+        showMessage(
+
+          "❌ Empty response from attendance server.",
+
+          "error"
+
+        );
+
+
+        finish();
+
+        return;
+
+      }
+
+
+
+      /******************************************
+       * SERVER RETURNED ERROR
+       ******************************************/
+
+      if (!response.success) {
+
+
+        /*
+         * DUPLICATE
+         */
+
+        if (response.duplicate) {
+
+
+          document.getElementById("result")
+
+            .innerHTML =
+
+
+              "<div class='student-name'>" +
+
+              (
+
+                response.name ||
+
+                response.student ||
+
+                studentId
+
+              ) +
+
+              "</div>" +
+
+
+              "<div class='student-info'>" +
+
+              "Grade " +
+
+              (response.grade || "") +
+
+              " - " +
+
+              (response.section || "") +
+
+              "</div>" +
+
+
+              "<div class='student-info'>" +
+
+              "Time: " +
+
+              (response.time || "") +
+
+              "</div>" +
+
+
+              "<div class='student-info'>" +
+
+              "Status: " +
+
+              (response.status || "") +
+
+              "</div>" +
+
+
+              "<div class='error'>" +
+
+              "⚠ Attendance already recorded today" +
+
+              "</div>";
+
+
+          finish();
+
+          return;
+
+        }
+
+
+
+        /*
+         * NORMAL SERVER ERROR
+         */
 
         showMessage(
 
           "❌ " +
+
           (
-            response &&
-            response.message
-              ? response.message
-              : "Attendance server returned an error."
+
+            response.message ||
+
+            "Attendance server error."
+
           ),
 
           "error"
@@ -426,159 +720,206 @@ function recordAttendance(studentId) {
         );
 
 
-        cleanup();
-
-
-        setTimeout(
-          resetScanner,
-          3000
-        );
-
+        finish();
 
         return;
 
       }
 
 
-      /*
-       * SUCCESS
-       */
 
-      const studentName =
-        response.student ||
+      /******************************************
+       * SUCCESS
+       ******************************************/
+
+
+      const name =
+
         response.name ||
+
+        response.student ||
+
         studentId;
 
 
-      const studentGrade =
-        response.grade ||
-        "";
+      const period =
+
+        response.period || "";
 
 
-      const studentSection =
-        response.section ||
-        "";
+      const status =
+
+        response.status || "RECORDED";
 
 
-      const studentTime =
-        response.time ||
-        "";
+
+      /*
+       * STATUS DISPLAY
+       */
+
+      let statusHTML = "";
 
 
-      const studentStatus =
-        response.status ||
-        "";
+
+      /*
+       * EXIT
+       */
+
+      if (period === "EXIT") {
 
 
-      const studentPeriod =
-        response.period ||
-        "";
+        statusHTML =
 
+          "<div class='exit'>" +
 
-      let statusClass =
-        "present";
+          "EXIT RECORDED" +
 
-
-      if (
-        studentStatus === "LATE"
-      ) {
-
-        statusClass =
-          "late";
-
-      }
-
-
-      if (
-        studentPeriod === "EXIT"
-      ) {
-
-        statusClass =
-          "exit";
+          "</div>";
 
       }
 
 
       /*
-       * SHOW RESULT
+       * LATE
+       */
+
+      else if (status === "LATE") {
+
+
+        statusHTML =
+
+          "<div class='late'>" +
+
+          "LATE" +
+
+          "</div>";
+
+      }
+
+
+      /*
+       * PRESENT
+       */
+
+      else {
+
+
+        statusHTML =
+
+          "<div class='present'>" +
+
+          status +
+
+          "</div>";
+
+      }
+
+
+
+      /*
+       * DISPLAY STUDENT
        */
 
       document.getElementById("result")
+
         .innerHTML =
 
-        "<div class='student-name'>" +
-        studentName +
-        "</div>" +
 
-        "<div class='student-info'>" +
-        "Student ID: " +
-        studentId +
-        "</div>" +
+          "<div class='student-name'>" +
 
-        (
-          studentGrade
-          ? "<div class='student-info'>" +
-            "Grade " +
-            studentGrade +
-            (
-              studentSection
-              ? " - " +
-                studentSection
-              : ""
-            ) +
-            "</div>"
-          : ""
-        ) +
+          name +
 
-        "<div class='student-info'>" +
-        "Time: " +
-        studentTime +
-        "</div>" +
-
-        (
-          studentPeriod
-          ? "<div class='student-info'>" +
-            "Period: " +
-            studentPeriod +
-            "</div>"
-          : ""
-        ) +
-
-        "<div class='" +
-        statusClass +
-        "'>" +
-        studentStatus +
-        "</div>";
+          "</div>" +
 
 
-      cleanup();
+          "<div class='student-info'>" +
+
+          "Student ID: " +
+
+          (
+
+            response.studentId ||
+
+            studentId
+
+          ) +
+
+          "</div>" +
+
+
+          "<div class='student-info'>" +
+
+          "Grade " +
+
+          (response.grade || "") +
+
+          " - " +
+
+          (response.section || "") +
+
+          "</div>" +
+
+
+          "<div class='student-info'>" +
+
+          "Period: " +
+
+          period +
+
+          "</div>" +
+
+
+          "<div class='student-info'>" +
+
+          "Time: " +
+
+          (response.time || "") +
+
+          "</div>" +
+
+
+          statusHTML;
+
 
 
       /*
-       * Allow next scan after 4 seconds
+       * WAIT 4 SECONDS
        */
 
-      setTimeout(
-        resetScanner,
-        4000
-      );
+      setTimeout(function() {
+
+
+        document.getElementById("result")
+
+          .innerHTML =
+
+
+            "<div class='waiting'>" +
+
+            "Waiting for student QR code..." +
+
+            "</div>";
+
+
+        finish();
+
+
+      }, 4000);
+
 
     };
 
 
-  /*
-   * CREATE SCRIPT
-   */
 
-  const script =
-    document.createElement(
-      "script"
-    );
+  /**********************************************
+   * CREATE JSONP SCRIPT
+   **********************************************/
 
 
-  /*
-   * BUILD REQUEST
-   */
+  script =
+
+    document.createElement("script");
+
 
   const url =
 
@@ -587,121 +928,134 @@ function recordAttendance(studentId) {
     "?action=record" +
 
     "&id=" +
-    encodeURIComponent(
-      studentId
-    ) +
+
+    encodeURIComponent(studentId) +
 
     "&station=" +
-    encodeURIComponent(
-      STATION_ID
-    ) +
+
+    encodeURIComponent(STATION_ID) +
 
     "&token=" +
-    encodeURIComponent(
-      STATION_TOKEN
-    ) +
+
+    encodeURIComponent(STATION_TOKEN) +
 
     "&callback=" +
-    encodeURIComponent(
-      callbackName
-    );
+
+    encodeURIComponent(callbackName) +
+
+    "&_=" +
+
+    Date.now();
+
 
 
   console.log(
+
     "Sending attendance request:",
+
     url
+
   );
 
 
-  script.src =
-    url;
+
+  script.src = url;
+
 
 
   /*
-   * SERVER CONNECTION ERROR
+   * NETWORK ERROR
    */
 
   script.onerror =
+
     function() {
 
+
       if (finished) {
+
         return;
+
       }
 
 
       showMessage(
 
-        "❌ Unable to connect to attendance server.",
+        "❌ Unable to contact attendance server.",
 
         "error"
 
       );
 
 
-      cleanup();
-
-
-      setTimeout(
-        resetScanner,
-        3000
-      );
+      finish();
 
     };
 
 
-  document.body.appendChild(
-    script
-  );
-
 
   /*
-   * TIMEOUT
-   *
-   * Prevents scanner from being stuck
-   * forever on "Processing..."
+   * ADD SCRIPT TO PAGE
    */
 
-  setTimeout(
-    function() {
+  document.body.appendChild(script);
 
-      if (finished) {
-        return;
-      }
+
+
+  /**********************************************
+   * SAFETY TIMEOUT
+   **********************************************/
+
+  setTimeout(function() {
+
+
+    if (!finished) {
 
 
       showMessage(
 
         "❌ Attendance server did not respond.<br><br>" +
-        "Please try scanning again.",
+
+        "Please check the internet connection.",
 
         "error"
 
       );
 
 
-      cleanup();
+      finish();
+
+    }
 
 
-      setTimeout(
-        resetScanner,
-        3000
-      );
+  }, 10000);
 
-
-    },
-    10000
-  );
 
 }
+
+
+
+/************************************************
+ * QR SCAN CONTROL
+ ************************************************/
+
+
+let processing = false;
+
 
 
 /************************************************
  * QR SCANNED
  ************************************************/
 
-function onScanSuccess(
-  decodedText
-) {
+
+function onScanSuccess(decodedText) {
+
+
+  /*
+   * Ignore additional scans while
+   * current request is processing.
+   */
 
   if (processing) {
 
@@ -714,18 +1068,30 @@ function onScanSuccess(
 
 
   console.log(
+
     "QR scanned:",
+
     decodedText
+
   );
 
 
-  const studentId =
-    extractStudentID(
-      decodedText
-    );
+  /*
+   * GET STUDENT ID
+   */
 
+  const studentId =
+
+    extractStudentID(decodedText);
+
+
+
+  /*
+   * INVALID QR
+   */
 
   if (!studentId) {
+
 
     showMessage(
 
@@ -736,10 +1102,11 @@ function onScanSuccess(
     );
 
 
-    setTimeout(
-      resetScanner,
-      2000
-    );
+    setTimeout(function() {
+
+      processing = false;
+
+    }, 2000);
 
 
     return;
@@ -747,44 +1114,50 @@ function onScanSuccess(
   }
 
 
-  recordAttendance(
-    studentId
-  );
+
+  /*
+   * SEND TO SERVER
+   */
+
+  recordAttendance(studentId);
 
 }
+
 
 
 /************************************************
- * QR SCANNER ERROR
+ * QR SCANNER FAILURE
  ************************************************/
 
-function onScanFailure(
-  error
-) {
+
+function onScanFailure(error) {
 
   /*
-   * Normal QR scanning errors
-   * are ignored.
+   * Normal scanning failures are ignored.
    */
 
 }
+
 
 
 /************************************************
  * START CAMERA
  ************************************************/
 
+
 function startScanner() {
 
+
   const html5QrCode =
-    new Html5Qrcode(
-      "reader"
-    );
+
+    new Html5Qrcode("reader");
 
 
   const config = {
 
+
     fps: 10,
+
 
     qrbox: {
 
@@ -797,49 +1170,61 @@ function startScanner() {
   };
 
 
+
   html5QrCode.start(
 
     {
-      facingMode:
-        "environment"
+
+      facingMode: "environment"
+
     },
+
 
     config,
 
+
     onScanSuccess,
+
 
     onScanFailure
 
   )
 
-  .catch(
-    function(error) {
 
-      console.error(
-        error
-      );
+  .catch(function(error) {
 
 
-      showMessage(
+    console.error(error);
 
-        "❌ Camera could not start.<br><br>" +
 
-        "Please allow camera permission " +
-        "for this website.",
+    showMessage(
 
-        "error"
 
-      );
+      "❌ Camera could not start.<br><br>" +
 
-    }
-  );
+
+      "Please allow camera permission " +
+
+      "for this website.",
+
+
+      "error"
+
+
+    );
+
+
+  });
+
 
 }
 
 
+
 /************************************************
- * START
+ * START APPLICATION
  ************************************************/
+
 
 window.addEventListener(
 
@@ -847,13 +1232,17 @@ window.addEventListener(
 
   function() {
 
+
     startScanner();
+
 
   }
 
 );
 
+
 </script>
+
 
 </body>
 
